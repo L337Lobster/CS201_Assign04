@@ -14,21 +14,23 @@ import java.util.NoSuchElementException;
  * are face-up, and all other cards are face-down.
  */
 public class Pile {
-	// TODO: add fields
+	int expIndex; //expose index
+	ArrayList<Card> pile;
 
 	/**
 	 * Constructor.  The pile will be empty initially,
 	 * and its expose index will be set to 0.
 	 */
 	public Pile() {
-		throw new UnsupportedOperationException("TODO - implement");
+		pile = new ArrayList<Card>();
+		expIndex = 0;
 	}
 
 	/**
 	 * @return the expose index
 	 */
 	public int getExposeIndex() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return expIndex;
 	}
 	
 	/**
@@ -37,7 +39,7 @@ public class Pile {
 	 * @param exposeIndex the expose index to set
 	 */
 	public void setExposeIndex(int exposeIndex) {
-		throw new UnsupportedOperationException("TODO - implement");
+		expIndex = exposeIndex;
 	}
 	
 	/**
@@ -47,21 +49,21 @@ public class Pile {
 	 * @param card the {@link Card} to add
 	 */
 	public void addCard(Card card) {
-		throw new UnsupportedOperationException("TODO - implement");
+		pile.add(card);
 	}
 
 	/**
 	 * @return the number of @{link Card}s in the pile
 	 */
 	public int getNumCards() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return pile.size();
 	}
 	
 	/**
 	 * @return true if the pile is empty, false otherwise
 	 */
 	public boolean isEmpty() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return (pile.size() == 0) ? true : false;
 	}
 	
 	/**
@@ -72,7 +74,11 @@ public class Pile {
 	 * @throws NoSuchElementException if the index does not refer to a valid card
 	 */
 	public Card getCard(int index) {
-		throw new UnsupportedOperationException("TODO - implement");
+		if(index < 0 || index >= pile.size())
+		{
+			throw new NoSuchElementException();
+		}
+		return pile.get(index);
 	}
 
 	/**
@@ -82,14 +88,18 @@ public class Pile {
 	 * @throws NoSuchElementException if the pile is empty
 	 */
 	public Card getTopCard() {
-		throw new UnsupportedOperationException("TODO - implement");
+		if(pile.size() == 0)
+		{
+			throw new NoSuchElementException();
+		}
+		return pile.get(pile.size()-1);
 	}
 	
 	/**
 	 * @return the index of the top {@link Card}, or -1 if the pile is empty
 	 */
 	public int getIndexOfTopCard() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return pile.size()-1;
 	}
 	
 	/**
@@ -100,7 +110,24 @@ public class Pile {
 	 * @throws IllegalArgumentException if the pile does not have enough {@link Card}s to satisfy the request
 	 */
 	public ArrayList<Card> removeCards(int numCards) {
-		throw new UnsupportedOperationException("TODO - implement");
+		ArrayList<Card> removed = new ArrayList<Card>();
+		if(pile.size() < numCards)
+		{
+			throw new IllegalArgumentException();
+		}
+		if(numCards == 16)
+		{
+			for(int i = pile.size()-1; i > 0; i--)
+			{
+				System.err.println(pile.get(i));
+			}
+		}
+		for(int i = 0; i < numCards; i++)
+		{
+			removed.add(pile.get(pile.size()-1));
+			pile.remove(pile.size()-1);
+		}
+		return removed;
 	}
 	
 	/**
@@ -109,7 +136,10 @@ public class Pile {
 	 * @param cardsToAdd an ArrayList containing the {@link Card}s to add
 	 */
 	public void addCards(ArrayList<Card> cardsToAdd) {
-		throw new UnsupportedOperationException("TODO - implement");
+		for(int i = 0; i < cardsToAdd.size(); i++)
+		{
+			pile.add(cardsToAdd.get(i));
+		}
 	}
 	
 	/**
@@ -118,7 +148,13 @@ public class Pile {
 	 * {@link Suit} and {@link Rank}.
 	 */
 	public void populate() {
-		throw new UnsupportedOperationException("TODO - implement");
+		Suit[] suits = Suit.values();
+		Rank[] ranks = Rank.values();
+		for (Suit s : suits) {
+			for (Rank r : ranks) {
+				pile.add(new Card(r, s));
+			}
+		}
 	}
 
 	/**
@@ -126,7 +162,7 @@ public class Pile {
 	 * them randomly.
 	 */
 	public void shuffle() {
-		throw new UnsupportedOperationException("TODO - implement");
+		Collections.shuffle(pile);
 	}
 	
 	/**
@@ -135,7 +171,13 @@ public class Pile {
 	 * @return the removed {@link Card}
 	 * @throws NoSuchElementException if the pile is empty
 	 */
-	public Card drawCard() {
-		throw new UnsupportedOperationException("TODO - implement");
+	public Card drawCard(){
+		if(pile.size() == 0)
+		{
+			throw new NoSuchElementException();
+		}
+		Card temp = pile.get(pile.size()-1);
+		pile.remove(pile.size()-1);
+		return temp;
 	}
 }

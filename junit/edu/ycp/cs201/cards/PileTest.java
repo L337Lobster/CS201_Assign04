@@ -144,6 +144,11 @@ public class PileTest {
 		// Removing the top 16 cards should give us
 		// the jack of hearts through the king of spades.
 		// Note that ACE is the low rank.
+		System.out.println(pile.getNumCards());
+		for(int i = pile.getNumCards()-1; i > 0; i--)
+		{
+			System.out.println(pile.getCard(i));
+		}
 		ArrayList<Card> removed = pile.removeCards(16);
 		
 		int index = 0;
