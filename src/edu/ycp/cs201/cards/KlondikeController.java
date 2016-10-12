@@ -1,6 +1,7 @@
 package edu.ycp.cs201.cards;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * The controller class implements all of the logic required to
@@ -326,7 +327,20 @@ public class KlondikeController {
 	 * @param model the {@link KlondikeModel}
 	 */
 	public void drawCardOrRecycleWaste(KlondikeModel model) {
-		throw new UnsupportedOperationException("TODO - implement");
+		if(model.getMainDeck().isEmpty())
+		{
+			ArrayList<Card> temp = model.getWastePile().removeCards(model.getWastePile().getNumCards());
+			Collections.reverse(temp);
+			model.getMainDeck().addCards(temp);
+		}
+		else
+		{
+			model.getWastePile().addCards(model.getMainDeck().removeCards(1));
+		}
+		if(!model.getMainDeck().isEmpty())
+		{
+			model.getMainDeck().setExposeIndex(model.getMainDeck().getIndexOfTopCard());
+		}
 	}
 
 	/**
