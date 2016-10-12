@@ -19,14 +19,14 @@ public class Main {
 				KlondikeModel model = new KlondikeModel();
 
 				// Start with a random initial game state
-				controller.initModel(model);
+				//controller.initModel(model);
 				
 				// Alternatively, you can comment out the line above and
 				// uncomment one of the following lines to load one of
 				// the game states used in KlondikeControllerTest.  This
 				// is useful for testing features that rely on more advanced
 				// game states.
-//				StringifyGameState.stringToModel(model, "00000023G-NE,(MS')=TR#Q0IPB82A%D!00000053!00000000\"!00000000/!00000000!00000000!000000001J!00000001<4&?!00000002L+6!0000000397OU:!00000004H.>KF!00000000!00000006$5@C*;3");
+				StringifyGameState.stringToModel(model, "00000023G-NE,(MS')=TR#Q0IPB82A%D!00000053!00000000\"!00000000/!00000000!00000000!000000001J!00000001<4&?!00000002L+6!0000000397OU:!00000004H.>KF!00000000!00000006$5@C*;3");
 //				StringifyGameState.stringToModel(model, "00000009G-NE,(MS')!00000053DA28BQT!" +
 //						"00000000\"#!00000000/0!00000000I!00000000<=!00000000U:!00000000!00000002L+6O4&?!" +
 //						"000000009!00000004H.>KFR7P!00000000!00000006$5@C*;3%1J");

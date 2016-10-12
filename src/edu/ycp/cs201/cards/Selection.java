@@ -1,5 +1,6 @@
 package edu.ycp.cs201.cards;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 /**
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 public class Selection {
 	private Location origin;
 	private ArrayList<Card> selected;
+	private int xOffset, yOffset;
 	/**
 	 * Constructor.
 	 * 
@@ -22,7 +24,25 @@ public class Selection {
 		this.origin = origin;
 		this.selected = selected;
 	}
-
+	public Selection(Location origin, ArrayList<Card> selected, Point clicked, int vertOff, int horizOff)
+	{
+		this.origin = origin;
+		this.selected = selected;
+		xOffset = clicked.x-horizOff;
+		yOffset = clicked.y-vertOff;
+	}
+	/**
+	 * @return the xOffset
+	 */
+	public int getxOffset() {
+		return xOffset;
+	}
+	/**
+	 * @return the yOffset
+	 */
+	public int getyOffset() {
+		return yOffset;
+	}
 	/**
 	 * @return the origin (source) {@link Location} which describes where the cards
 	 *         are being moved from

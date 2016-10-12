@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -59,13 +60,17 @@ public class KlondikeView extends JPanel {
 	private KlondikeController controller;
 	
 	private CardImageCollection cardImageCollection;
-	// TODO: add other fields
+	
+	private Selection selected;
+	private Point mousePos, cardClicked;
 	
 	public KlondikeView() {
 		setBackground(new Color(0, 100, 0));
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		cardImageCollection = new CardImageCollection();
-		
+		selected = null;
+		mousePos = new Point(WIDTH/2, HEIGHT/2);
+		cardClicked = new Point(WIDTH/2, HEIGHT/2);
 		MouseAdapter listener = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -98,33 +103,34 @@ public class KlondikeView extends JPanel {
 		// TODO: implement
 		//check if mouse is vertically in the first row of piles
 		//this includes the main pile, the waste pile, and the foundation piles
+		mousePos = new Point(e.getX(), e.getY());
+		cardClicked = new Point(e.getX(), e.getY());
 		if(isFirstRow(e.getY()))
 		{
 			int leftBound = LEFT_OFFSET;
 			int rightBound = leftBound+CARD_WIDTH;
-			int j = rightBound%100;
 			for(int i = 0; i < 6; i++)
 			{
 				if(e.getX() > leftBound && e.getX() < rightBound)
 				{
-					switch(j)
+					switch(i)
 					{
-					case 10:
-						System.out.println("Main pile, " + leftBound + " " + rightBound);
+					case 0:
+						selected = controller.select(model, new Location(LocationType.MAIN_DECK, 0, model.getMainDeck().getIndexOfTopCard()), cardClicked);
 						break;
-					case 20:
-						System.out.println("Waste pile, " + leftBound + " " + rightBound);
+					case 1:
+						controller.drawCardOrRecycleWaste(model);
 						break;
-					case 40:
+					case 2:
 						System.out.println("F1 pile, " + leftBound + " " + rightBound);
 						break;
-					case 50:
+					case 3:
 						System.out.println("F2 pile, " + leftBound + " " + rightBound);
 						break;
-					case 60:
+					case 4:
 						System.out.println("F3 pile, " + leftBound + " " + rightBound);
 						break;
-					case 70:
+					case 5:
 						System.out.println("F4 pile, " + leftBound + " " + rightBound);
 						break;
 					}
@@ -139,67 +145,54 @@ public class KlondikeView extends JPanel {
 					leftBound += HORIZONTAL_PILE_SPACING;
 					rightBound += HORIZONTAL_PILE_SPACING;
 				}
-				j = rightBound%100;
 			}
 		}
 		else if(isTableauRow(e.getY()))
 		{
 			int leftBound = LEFT_OFFSET;
 			int rightBound = leftBound+CARD_WIDTH;
-			int j = rightBound%100;
+			int j = 0;
 			for(int i = 0; i < 7; i++)
 			{
 				if(e.getX() > leftBound && e.getX() < rightBound)
 				{
-					switch(j)
+					if(withinTableau(e.getY(), i))
 					{
-					case 10:
-						System.out.println("T1 pile, " + leftBound + " " + rightBound);
-						break;
-					case 20:
-						System.out.println("T2 pile, " + leftBound + " " + rightBound);
-						break;
-					case 30:
-						System.out.println("T3 pile, " + leftBound + " " + rightBound);
-						break;
-					case 40:
-						System.out.println("T4 pile, " + leftBound + " " + rightBound);
-						break;
-					case 50:
-						System.out.println("T5 pile, " + leftBound + " " + rightBound);
-						break;
-					case 60:
-						System.out.println("T6 pile, " + leftBound + " " + rightBound);
-						break;
-					case 70:
-						System.out.println("T7 pile, " + leftBound + " " + rightBound);
-						break;
+						j = (e.getY()-TABLEAU_TOP_OFFSET)/24;
+						selected = controller.select(model, new Location(LocationType.TABLEAU_PILE, i, j), cardClicked);
 					}
 				}
 				leftBound += HORIZONTAL_PILE_SPACING;
 				rightBound += HORIZONTAL_PILE_SPACING;
-				j = rightBound%100;
 			}
 		}
 		repaint();
 	}
+	protected boolean withinTableau(int y, int i)
+	{
+		int yMax = (model.getTableauPile(i).getNumCards()*VERTICAL_CARD_SPACING)+(CARD_HEIGHT-VERTICAL_CARD_SPACING) + TABLEAU_TOP_OFFSET;
+		return (y < yMax);
+	}
 	protected boolean isFirstRow(int y)
 	{
-		return ((y > 20) && (y < 136));
+		return ((y > TOP_OFFSET) && (y < TOP_OFFSET+CARD_HEIGHT));
 	}
 	protected boolean isTableauRow(int y)
 	{
-		return (y > 160);
+		return (y > TABLEAU_TOP_OFFSET);
 	}
 	protected void handleMouseDragged(MouseEvent e) {
 		// TODO: implement
-		
+		mousePos = new Point(e.getX(), e.getY());
 		repaint();
 	}
 
 	protected void handleMouseReleased(MouseEvent e) {
-		// TODO: implement
-		
+		if(selected != null)
+		{
+			controller.unselect(model, selected);	
+			selected = null;
+		}	
 		repaint();
 	}
 	
@@ -226,7 +219,15 @@ public class KlondikeView extends JPanel {
 		}
 		
 		// TODO: draw selection (if there is one)
-		
+		if(selected != null)
+		{
+			int numCards = selected.getNumCards();
+			for (int i = 0; i < numCards; i++) {
+				Card card = selected.getCards().get(i);
+				BufferedImage img = cardImageCollection.getFrontImage(card);
+				g.drawImage(img, mousePos.x-selected.getxOffset(), mousePos.y - selected.getyOffset() + i*VERTICAL_CARD_SPACING, null);
+			}
+		}
 		if(controller.isWin(model))
 		{
 			// TODO: draw congratulatory message if player has won the game

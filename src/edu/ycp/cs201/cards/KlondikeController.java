@@ -1,5 +1,6 @@
 package edu.ycp.cs201.cards;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -116,7 +117,46 @@ public class KlondikeController {
 		}
 		return select;
 	}
-
+	public Selection select(KlondikeModel model, Location location, Point clicked) {
+		//set default state to null and then don't have anything change it if the location type is waste or foundation
+		Selection select = null;
+		//check for the location type of the location
+		switch(location.getLocationType())
+		{
+		case MAIN_DECK:
+			//as long as the main deck isn't empty and the selected card is the top card of the main deck set the selection to the top card
+			if(!model.getMainDeck().isEmpty() && location.getCardIndex() == model.getMainDeck().getIndexOfTopCard())
+			{
+				//set the selection to the top card of the main deck and remove it from the main deck
+				select = new Selection(location, model.getMainDeck().removeCards(1), clicked, 20, 30);
+			}
+			break;
+		case TABLEAU_PILE:
+			//checks to make sure the card has an index greater than zero and less than the number of cards in the tableau
+			if(location.getCardIndex() > model.getTableauPile(location.getPileIndex()).getNumCards())
+			{
+				location = new Location(location.getLocationType(), location.getPileIndex(), model.getTableauPile(location.getPileIndex()).getIndexOfTopCard());
+			}
+			if(location.getCardIndex() >= 0 && location.getCardIndex() < model.getTableauPile(location.getPileIndex()).getNumCards())
+			{
+				//as long as the card is exposed continue
+				if(location.getCardIndex() >= model.getTableauPile(location.getPileIndex()).getExposeIndex())
+				{
+					//sets the selection to the location and the cards removed from the specified tableau pile where the number removed is 
+					//equal to the total number of cards in the pile minus the index of the card that is clicked on
+					ArrayList<Card> temp = model.getTableauPile(location.getPileIndex()).removeCards(model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex());
+					int horizOffset = 30+(location.getPileIndex()*110);
+					int vertOffset = 160+(24*location.getCardIndex());					
+					select = new Selection(location, temp, clicked, vertOffset, horizOffset);
+				}
+			}
+			break;
+		default:
+			break;
+		
+		}
+		return select;
+	}
 	/**
 	 * "Undo" a selection by moving cards from a {@link Selection} object
 	 * back to the pile they were taken from, as indicated by the
@@ -348,6 +388,7 @@ public class KlondikeController {
 		{
 			//remove the top card from the main deck and add it to the waste pile
 			model.getWastePile().addCards(model.getMainDeck().removeCards(1));
+			model.getWastePile().setExposeIndex(model.getWastePile().getNumCards());
 		}
 		//if the main deck isn't empty expose the top card only
 		if(!model.getMainDeck().isEmpty())
