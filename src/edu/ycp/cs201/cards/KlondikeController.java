@@ -97,11 +97,14 @@ public class KlondikeController {
 			break;
 		case TABLEAU_PILE:
 			//checks to make sure the card in the specified tableau pile is not null and is exposed
-			if((model.getTableauPile(location.getPileIndex()).getCard(location.getCardIndex()) != null) && (location.getCardIndex() > model.getTableauPile(location.getPileIndex()).getExposeIndex()))
+			if(location.getCardIndex() >= 0 && location.getCardIndex() < model.getTableauPile(location.getPileIndex()).getNumCards())
 			{
-				//sets the selection to the location and the cards removed from the specified tableau pile where the number removed is 
-				//equal to the total number of cards in the pile minus the index of the card that is clicked on
-				select = new Selection(location, model.getTableauPile(location.getPileIndex()).removeCards(model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex()));
+				if(location.getCardIndex() >= model.getTableauPile(location.getPileIndex()).getExposeIndex())
+				{
+					//sets the selection to the location and the cards removed from the specified tableau pile where the number removed is 
+					//equal to the total number of cards in the pile minus the index of the card that is clicked on
+					select = new Selection(location, model.getTableauPile(location.getPileIndex()).removeCards(model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex()));
+				}
 			}
 			break;
 		case WASTE_PILE:
