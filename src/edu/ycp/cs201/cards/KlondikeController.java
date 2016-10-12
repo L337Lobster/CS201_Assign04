@@ -26,8 +26,25 @@ public class KlondikeController {
 	 * @param model the {@link KlondikeModel} object to initialize
 	 */
 	public void initModel(KlondikeModel model) {
+		//init model, populate it with a full 52 cards, then shuffle it
 		model = new KlondikeModel();
 		model.getMainDeck().populate();
+		model.getMainDeck().shuffle();
+		//deal to the tableaus and set the expose index to just the top card
+		for(int i = 0; i < model.getTableaus().size(); i++)
+		{
+			model.getTableauPile(i).addCards(model.getMainDeck().removeCards(i+1));
+			model.getTableauPile(i).setExposeIndex(model.getTableauPile(i).getIndexOfTopCard());
+		}
+		//set expose index of main deck to just the top card
+		model.getMainDeck().setExposeIndex(model.getMainDeck().getIndexOfTopCard());
+		//set expose index of waste deck to 53 so that no cards will ever be exposed
+		model.getWastePile().setExposeIndex(53);
+		//set expose index of foundation piles to 0
+		for(int i = 0; i < model.getFoundations().size(); i++)
+		{
+			model.getFoundationPile(i).setExposeIndex(0);
+		}
 	}
 
 	/**
@@ -67,7 +84,34 @@ public class KlondikeController {
 	 *         indicate a legal location from which cards can be moved
 	 */
 	public Selection select(KlondikeModel model, Location location) {
-		throw new UnsupportedOperationException("TODO - implement");
+		Selection select = null;
+		switch(location.getLocationType())
+		{
+		case FOUNDATION_PILE:
+			break;
+		case MAIN_DECK:
+			if(!model.getMainDeck().isEmpty() && location.getCardIndex() == model.getMainDeck().getIndexOfTopCard())
+			{
+				select = new Selection(location, model.getMainDeck().removeCards(1));
+			}
+			break;
+		case TABLEAU_PILE:
+			//checks to make sure the card in the specified tableau pile is not null and is exposed
+			if((model.getTableauPile(location.getPileIndex()).getCard(location.getCardIndex()) != null) && (location.getCardIndex() > model.getTableauPile(location.getPileIndex()).getExposeIndex()))
+			{
+				//sets the selection to the location and the cards removed from the specified tableau pile where the number removed is 
+				//equal to the total number of cards in the pile minus the index of the card that is clicked on
+				select = new Selection(location, model.getTableauPile(location.getPileIndex()).removeCards(model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex()));
+			}
+			break;
+		case WASTE_PILE:
+			break;
+		default:
+			System.err.println("How did you get to this line?");
+			break;
+		
+		}
+		return select;
 	}
 
 	/**
@@ -81,7 +125,20 @@ public class KlondikeController {
 	 * @param selection  the {@link Selection} to undo
 	 */
 	public void unselect(KlondikeModel model, Selection selection) {
-		throw new UnsupportedOperationException("TODO - implement");
+		switch(selection.getOrigin().getLocationType())
+		{
+		case FOUNDATION_PILE:
+			break;
+		case MAIN_DECK:
+			break;
+		case TABLEAU_PILE:
+			break;
+		case WASTE_PILE:
+			break;
+		default:
+			break;
+		
+		}
 	}
 
 	/**

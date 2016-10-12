@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class KlondikeModel {
 	//ArrayList of ArrayLists of type Card.
 	//tableaus will be the tableaus and foundation will be the foundations
-	private ArrayList<Pile> tableaus, foundation; 
+	private ArrayList<Pile> tableaus, foundations; 
 	//mainDeck is the main deck and waste is the waste pile
 	private Pile mainDeck, waste;
 	/**
@@ -23,7 +23,7 @@ public class KlondikeModel {
 	 */
 	public KlondikeModel() {
 		tableaus = new ArrayList<Pile>();
-		foundation = new ArrayList<Pile>();
+		foundations = new ArrayList<Pile>();
 		mainDeck = new Pile();
 		waste = new Pile();
 		for(int i = 0; i < 7; i++)
@@ -31,11 +31,24 @@ public class KlondikeModel {
 			tableaus.add(new Pile());
 			if(i < 4)
 			{
-				foundation.add(new Pile());
+				foundations.add(new Pile());
 			}
 		}
 	}
-	
+	/**
+	 * @return the ArrayList of {@link Pile}s the represent the tableaus
+	 */
+	public ArrayList<Pile> getTableaus()
+	{
+		return tableaus;
+	}
+	/**
+	 * @return the ArrayList of {@link Pile}s the represent the foundations
+	 */
+	public ArrayList<Pile> getFoundations()
+	{
+		return foundations;
+	}
 	/**
 	 * @return the {@link Pile} representing the main deck
 	 */
@@ -68,7 +81,7 @@ public class KlondikeModel {
 		{
 			throw new IndexOutOfBoundsException();
 		}
-		return foundation.get(index);
+		return foundations.get(index);
 	}
 
 	/**
