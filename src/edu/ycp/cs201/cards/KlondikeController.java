@@ -263,6 +263,7 @@ public class KlondikeController {
 	 * @param dest       the destination {@link Location}
 	 */
 	public void moveCards(KlondikeModel model, Selection selection, Location dest) {
+		//checks for the location type of the destination and then adds the cards to the appropriate location
 		switch(dest.getLocationType())
 		{
 		case FOUNDATION_PILE:
@@ -277,17 +278,23 @@ public class KlondikeController {
 		case MAIN_DECK:
 			model.getMainDeck().addCards(selection.getCards());
 		default:
+			System.err.println("How did you get here?");
 			break;
 		}
+		//checks for the location type of the origin
+		//since cards can only be moved from a tableau or the main deck only need to check those
 		switch(selection.getOrigin().getLocationType())
 		{
-		case FOUNDATION_PILE:
+		//if tableau and pile isn't empty after move and top card isn't exposed, expose it
 		case TABLEAU_PILE:
-			if(!model.getTableauPile(selection.getOrigin().getPileIndex()).isEmpty())
+			int originExpose = model.getTableauPile(selection.getOrigin().getPileIndex()).getExposeIndex();
+			int originTopIndex = model.getTableauPile(selection.getOrigin().getPileIndex()).getIndexOfTopCard();
+			if(!model.getTableauPile(selection.getOrigin().getPileIndex()).isEmpty() && (originTopIndex < originExpose))
 			{
-				model.getTableauPile(selection.getOrigin().getPileIndex()).setExposeIndex(model.getTableauPile(selection.getOrigin().getPileIndex()).getExposeIndex()-1);
+				model.getTableauPile(selection.getOrigin().getPileIndex()).setExposeIndex(model.getTableauPile(selection.getOrigin().getPileIndex()).getIndexOfTopCard());
 			}
 			break;
+		//if main deck isn't empty after move decrement the expose index
 		case MAIN_DECK:
 			if(!model.getMainDeck().isEmpty())
 			{
@@ -295,6 +302,7 @@ public class KlondikeController {
 			}
 			break;
 		default:
+			System.err.println("How did you get to this line?");
 			break;
 		
 		}
