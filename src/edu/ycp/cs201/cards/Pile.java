@@ -13,8 +13,8 @@ import java.util.NoSuchElementException;
  * are face-up, and all other cards are face-down.
  */
 public class Pile {
-	int expIndex; //expose index
-	ArrayList<Card> pile;
+	private int expIndex; //expose index
+	private ArrayList<Card> pile;
 
 	/**
 	 * Constructor.  The pile will be empty initially,

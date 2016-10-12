@@ -10,8 +10,8 @@ import java.util.ArrayList;
  * references to the cards that the user wants to move.
  */
 public class Selection {
-	Location origin;
-	ArrayList<Card> selected;
+	private Location origin;
+	private ArrayList<Card> selected;
 	/**
 	 * Constructor.
 	 * 

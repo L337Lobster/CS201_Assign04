@@ -13,9 +13,9 @@ import java.util.ArrayList;
 public class KlondikeModel {
 	//ArrayList of ArrayLists of type Card.
 	//tableaus will be the tableaus and foundation will be the foundations
-	ArrayList<Pile> tableaus, foundation; 
+	private ArrayList<Pile> tableaus, foundation; 
 	//mainDeck is the main deck and waste is the waste pile
-	Pile mainDeck, waste;
+	private Pile mainDeck, waste;
 	/**
 	 * Constructor.  Should create all of the required {@link Pile} objects,
 	 * but it should <em>not</em> initialize them.  All piles should start

@@ -26,7 +26,8 @@ public class KlondikeController {
 	 * @param model the {@link KlondikeModel} object to initialize
 	 */
 	public void initModel(KlondikeModel model) {
-		throw new UnsupportedOperationException("TODO - implement");
+		model = new KlondikeModel();
+		model.getMainDeck().populate();
 	}
 
 	/**
