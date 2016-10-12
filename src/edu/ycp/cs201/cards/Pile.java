@@ -2,7 +2,6 @@ package edu.ycp.cs201.cards;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -115,18 +114,12 @@ public class Pile {
 		{
 			throw new IllegalArgumentException();
 		}
-		if(numCards == 16)
-		{
-			for(int i = pile.size()-1; i > 0; i--)
-			{
-				System.err.println(pile.get(i));
-			}
-		}
 		for(int i = 0; i < numCards; i++)
 		{
 			removed.add(pile.get(pile.size()-1));
 			pile.remove(pile.size()-1);
 		}
+		Collections.reverse(removed);
 		return removed;
 	}
 	
