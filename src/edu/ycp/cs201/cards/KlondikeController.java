@@ -111,7 +111,6 @@ public class KlondikeController {
 			}
 			break;
 		default:
-			System.err.println("How did you get to this line?");
 			break;
 		
 		}
