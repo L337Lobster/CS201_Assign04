@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
  */
 public class Pile {
 	private int expIndex; //expose index
-	private ArrayList<Card> pile;
+	private ArrayList<Card> pile; //ArrayList of type Card representing the pile
 
 	/**
 	 * Constructor.  The pile will be empty initially,

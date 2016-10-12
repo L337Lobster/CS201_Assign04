@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class KlondikeModel {
 	//ArrayList of ArrayLists of type Card.
-	//tableaus will be the tableaus and foundation will be the foundations
+	//tableaus will be the tableaus and foundations will be the foundations
 	private ArrayList<Pile> tableaus, foundations; 
 	//mainDeck is the main deck and waste is the waste pile
 	private Pile mainDeck, waste;
@@ -22,13 +22,18 @@ public class KlondikeModel {
 	 * out as empty.
 	 */
 	public KlondikeModel() {
+		//initialize the tableau and foundation lists
+		//initialize the main deck and waste deck
 		tableaus = new ArrayList<Pile>();
 		foundations = new ArrayList<Pile>();
 		mainDeck = new Pile();
 		waste = new Pile();
+		//add a Pile for each tableaus
 		for(int i = 0; i < 7; i++)
 		{
 			tableaus.add(new Pile());
+			//only add a new pile to foundations as long as i is less than 4
+			//this is because there are only 4 foundation piles
 			if(i < 4)
 			{
 				foundations.add(new Pile());

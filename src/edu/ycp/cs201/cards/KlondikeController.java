@@ -84,21 +84,24 @@ public class KlondikeController {
 	 *         indicate a legal location from which cards can be moved
 	 */
 	public Selection select(KlondikeModel model, Location location) {
+		//set default state to null and then don't have anything change it if the location type is waste or foundation
 		Selection select = null;
+		//check for the location type of the location
 		switch(location.getLocationType())
 		{
-		case FOUNDATION_PILE:
-			break;
 		case MAIN_DECK:
+			//as long as the main deck isn't empty and the selected card is the top card of the main deck set the selection to the top card
 			if(!model.getMainDeck().isEmpty() && location.getCardIndex() == model.getMainDeck().getIndexOfTopCard())
 			{
+				//set the selection to the top card of the main deck and remove it from the main deck
 				select = new Selection(location, model.getMainDeck().removeCards(1));
 			}
 			break;
 		case TABLEAU_PILE:
-			//checks to make sure the card in the specified tableau pile is not null and is exposed
+			//checks to make sure the card has an index greater than zero and less than the number of cards in the tableau
 			if(location.getCardIndex() >= 0 && location.getCardIndex() < model.getTableauPile(location.getPileIndex()).getNumCards())
 			{
+				//as long as the card is exposed continue
 				if(location.getCardIndex() >= model.getTableauPile(location.getPileIndex()).getExposeIndex())
 				{
 					//sets the selection to the location and the cards removed from the specified tableau pile where the number removed is 
@@ -106,8 +109,6 @@ public class KlondikeController {
 					select = new Selection(location, model.getTableauPile(location.getPileIndex()).removeCards(model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex()));
 				}
 			}
-			break;
-		case WASTE_PILE:
 			break;
 		default:
 			System.err.println("How did you get to this line?");
@@ -128,8 +129,10 @@ public class KlondikeController {
 	 * @param selection  the {@link Selection} to undo
 	 */
 	public void unselect(KlondikeModel model, Selection selection) {
+		//check the location type of the origin
 		switch(selection.getOrigin().getLocationType())
 		{
+		//just some debugging code
 		case FOUNDATION_PILE:
 			System.err.println("How did you remove cards from a foundation pile?");
 			break;
@@ -141,6 +144,7 @@ public class KlondikeController {
 			//adds the selected card(s) back to the original specified tableau pile.
 			model.getTableauPile(selection.getOrigin().getPileIndex()).addCards(selection.getCards());
 			break;
+		//just some debugging code
 		case WASTE_PILE:
 			System.err.println("How did you remove cards from the waste pile?");
 			break;
@@ -330,16 +334,23 @@ public class KlondikeController {
 	 * @param model the {@link KlondikeModel}
 	 */
 	public void drawCardOrRecycleWaste(KlondikeModel model) {
+		//if the main deck is empty continue
 		if(model.getMainDeck().isEmpty())
 		{
+			//create temp ArrayList with the cards from the waste pile
 			ArrayList<Card> temp = model.getWastePile().removeCards(model.getWastePile().getNumCards());
+			//reverse the ArrayList so that they are put pack in the order they were placed
 			Collections.reverse(temp);
+			//add temp to main deck
 			model.getMainDeck().addCards(temp);
 		}
+		//if the main deck isn't empty
 		else
 		{
+			//remove the top card from the main deck and add it to the waste pile
 			model.getWastePile().addCards(model.getMainDeck().removeCards(1));
 		}
+		//if the main deck isn't empty expose the top card only
 		if(!model.getMainDeck().isEmpty())
 		{
 			model.getMainDeck().setExposeIndex(model.getMainDeck().getIndexOfTopCard());
@@ -356,6 +367,7 @@ public class KlondikeController {
 		boolean win = true;
 		for(int i = 0; i < model.getFoundations().size(); i++)
 		{
+			//if there aren't 13 cards in one of the foundation piles set win to false
 			if(model.getFoundationPile(i).getNumCards() != 13)
 			{
 				win = false;
