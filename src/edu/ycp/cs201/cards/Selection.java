@@ -1,7 +1,6 @@
 package edu.ycp.cs201.cards;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A Selection object represents one or more cards that
@@ -11,8 +10,8 @@ import java.util.List;
  * references to the cards that the user wants to move.
  */
 public class Selection {
-	// TODO: add fields
-	
+	Location origin;
+	ArrayList<Card> selected;
 	/**
 	 * Constructor.
 	 * 
@@ -20,7 +19,8 @@ public class Selection {
 	 * @param selected an ArrayList containing the {@link Card}s the user wants to move
 	 */
 	public Selection(Location origin, ArrayList<Card> selected) {
-		throw new UnsupportedOperationException("TODO - implement");
+		this.origin = origin;
+		this.selected = selected;
 	}
 
 	/**
@@ -28,20 +28,20 @@ public class Selection {
 	 *         are being moved from
 	 */
 	public Location getOrigin() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return origin;
 	}
 
 	/**
 	 * @return the ArrayList of {@link Card}s the user wants to move
 	 */
 	public ArrayList<Card> getCards() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return selected;
 	}
 
 	/**
 	 * @return the number of cards the user wants to move
 	 */
 	public int getNumCards() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return selected.size();
 	}
 }
