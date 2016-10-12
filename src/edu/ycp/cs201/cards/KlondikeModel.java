@@ -1,5 +1,7 @@
 package edu.ycp.cs201.cards;
 
+import java.util.ArrayList;
+
 /**
  * Model class storing information about a Klondike game
  * in progress.  Consists of a number of {@link Pile} objects
@@ -9,22 +11,36 @@ package edu.ycp.cs201.cards;
  * is implemented in the {@link KlondikeController} class.
  */
 public class KlondikeModel {
-	// TODO: add fields
-	
+	//ArrayList of ArrayLists of type Card.
+	//tableaus will be the tableaus and foundation will be the foundations
+	ArrayList<Pile> tableaus, foundation; 
+	//mainDeck is the main deck and waste is the waste pile
+	Pile mainDeck, waste;
 	/**
 	 * Constructor.  Should create all of the required {@link Pile} objects,
 	 * but it should <em>not</em> initialize them.  All piles should start
 	 * out as empty.
 	 */
 	public KlondikeModel() {
-		throw new UnsupportedOperationException("TODO - implement");
+		tableaus = new ArrayList<Pile>();
+		foundation = new ArrayList<Pile>();
+		mainDeck = new Pile();
+		waste = new Pile();
+		for(int i = 0; i < 7; i++)
+		{
+			tableaus.add(new Pile());
+			if(i < 4)
+			{
+				foundation.add(new Pile());
+			}
+		}
 	}
 	
 	/**
 	 * @return the {@link Pile} representing the main deck
 	 */
 	public Pile getMainDeck() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return mainDeck;
 	}
 
 	/**
@@ -34,7 +50,11 @@ public class KlondikeModel {
 	 * @return the tableau {@link Pile}
 	 */
 	public Pile getTableauPile(int index) {
-		throw new UnsupportedOperationException("TODO - implement");
+		if(index > 6)
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		return tableaus.get(index);
 	}
 	
 	/**
@@ -44,13 +64,17 @@ public class KlondikeModel {
 	 * @return the foundation {@link Pile}
 	 */
 	public Pile getFoundationPile(int index) {
-		throw new UnsupportedOperationException("TODO - implement");
+		if(index > 3)
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		return foundation.get(index);
 	}
 
 	/**
 	 * @return the {@link Pile} representing the waste pile
 	 */
 	public Pile getWastePile() {
-		throw new UnsupportedOperationException("TODO - implement");
+		return waste;
 	}
 }
