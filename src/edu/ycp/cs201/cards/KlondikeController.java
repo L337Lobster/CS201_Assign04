@@ -27,7 +27,6 @@ public class KlondikeController {
 	 */
 	public void initModel(KlondikeModel model) {
 		//init model, populate it with a full 52 cards, then shuffle it
-		model = new KlondikeModel();
 		model.getMainDeck().populate();
 		model.getMainDeck().shuffle();
 		//deal to the tableaus and set the expose index to just the top card
@@ -128,14 +127,21 @@ public class KlondikeController {
 		switch(selection.getOrigin().getLocationType())
 		{
 		case FOUNDATION_PILE:
+			System.err.println("How did you remove cards from a foundation pile?");
 			break;
 		case MAIN_DECK:
+			//adds the selected card back to the main deck (should only be one card if origin is from main deck)
+			model.getMainDeck().addCards(selection.getCards());
 			break;
 		case TABLEAU_PILE:
+			//adds the selected card(s) back to the original specified tableau pile.
+			model.getTableauPile(selection.getOrigin().getPileIndex()).addCards(selection.getCards());
 			break;
 		case WASTE_PILE:
+			System.err.println("How did you remove cards from the waste pile?");
 			break;
 		default:
+			System.err.println("How did get to this line?");
 			break;
 		
 		}
@@ -179,7 +185,59 @@ public class KlondikeController {
 	 * @return true if the move is legal, false if the move is not legal
 	 */
 	public boolean allowMove(KlondikeModel model, Selection selection, Location dest) {
-		throw new UnsupportedOperationException("TODO - implement");
+		boolean allow = false;
+		switch(dest.getLocationType())
+		{
+		case FOUNDATION_PILE:
+			//first checks to make sure there is only one card selected
+			if(selection.getNumCards() == 1)
+			{
+				//next check if the foundation pile is empty
+				if(model.getFoundationPile(dest.getPileIndex()).isEmpty())
+				{
+					//if foundation pile is empty check to make sure the card is an Ace
+					//could have done in one line but split for easier reading
+					if(selection.getCards().get(0).getRank().equals(Rank.ACE))
+					{
+						allow = true;
+					}
+				}
+				//if foundation pile isn't empty check to make sure the suit of the pile is the same as the selected card
+				else if(model.getFoundationPile(dest.getPileIndex()).getTopCard().getSuit().equals(selection.getCards().get(0).getSuit()))
+				{
+					//next check to make sure that the selected card is one higher than the top card in the pile
+					if(selection.getCards().get(0).getRank().ordinal() == (model.getFoundationPile(dest.getPileIndex()).getTopCard().getRank().ordinal()+1))
+					{
+						allow = true;
+					}
+				}
+			}
+			break;
+		case TABLEAU_PILE:
+			//check if tableau pile is empty
+			if(model.getTableauPile(dest.getPileIndex()).isEmpty())
+			{
+				//if empty check to make sure bottom card (index 0) is of rank King
+				if(selection.getCards().get(0).getRank().equals(Rank.KING))
+				{
+					allow = true;
+				}
+			}
+			//if not empty check to make sure suit color is not the same
+			else if(!selection.getCards().get(0).getSuit().getColor().equals(model.getTableauPile(dest.getPileIndex()).getTopCard().getSuit().getColor()))
+			{
+				//next check to make sure the ordinal value of the bottom of the selection is one less than the top of the destination
+				if(selection.getCards().get(0).getRank().ordinal() == model.getTableauPile(dest.getPileIndex()).getTopCard().getRank().ordinal()-1)
+				{
+					allow = true;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		return allow;
+		
 	}
 
 	/**
@@ -205,7 +263,41 @@ public class KlondikeController {
 	 * @param dest       the destination {@link Location}
 	 */
 	public void moveCards(KlondikeModel model, Selection selection, Location dest) {
-		throw new UnsupportedOperationException("TODO - implement");
+		switch(dest.getLocationType())
+		{
+		case FOUNDATION_PILE:
+			model.getFoundationPile(dest.getPileIndex()).addCards(selection.getCards());
+			break;
+		case TABLEAU_PILE:
+			model.getTableauPile(dest.getPileIndex()).addCards(selection.getCards());
+			break;
+		case WASTE_PILE:
+			model.getWastePile().addCards(selection.getCards());
+			break;
+		case MAIN_DECK:
+			model.getMainDeck().addCards(selection.getCards());
+		default:
+			break;
+		}
+		switch(selection.getOrigin().getLocationType())
+		{
+		case FOUNDATION_PILE:
+		case TABLEAU_PILE:
+			if(!model.getTableauPile(selection.getOrigin().getPileIndex()).isEmpty())
+			{
+				model.getTableauPile(selection.getOrigin().getPileIndex()).setExposeIndex(model.getTableauPile(selection.getOrigin().getPileIndex()).getExposeIndex()-1);
+			}
+			break;
+		case MAIN_DECK:
+			if(!model.getMainDeck().isEmpty())
+			{
+				model.getMainDeck().setExposeIndex(model.getMainDeck().getExposeIndex()-1);
+			}
+			break;
+		default:
+			break;
+		
+		}
 	}
 
 	/**
@@ -236,6 +328,14 @@ public class KlondikeController {
 	 * @return true if each foundation pile has 13 cards, false otherwise
 	 */
 	public boolean isWin(KlondikeModel model) {
-		throw new UnsupportedOperationException("TODO - implement");
+		boolean win = true;
+		for(int i = 0; i < model.getFoundations().size(); i++)
+		{
+			if(model.getFoundationPile(i).getNumCards() != 13)
+			{
+				win = false;
+			}
+		}
+		return win;
 	}
 }
