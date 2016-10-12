@@ -96,10 +96,101 @@ public class KlondikeView extends JPanel {
 	
 	protected void handleMousePressed(MouseEvent e) {
 		// TODO: implement
-		
+		//check if mouse is vertically in the first row of piles
+		//this includes the main pile, the waste pile, and the foundation piles
+		if(isFirstRow(e.getY()))
+		{
+			int leftBound = LEFT_OFFSET;
+			int rightBound = leftBound+CARD_WIDTH;
+			int j = rightBound%100;
+			for(int i = 0; i < 6; i++)
+			{
+				if(e.getX() > leftBound && e.getX() < rightBound)
+				{
+					switch(j)
+					{
+					case 10:
+						System.out.println("Main pile, " + leftBound + " " + rightBound);
+						break;
+					case 20:
+						System.out.println("Waste pile, " + leftBound + " " + rightBound);
+						break;
+					case 40:
+						System.out.println("F1 pile, " + leftBound + " " + rightBound);
+						break;
+					case 50:
+						System.out.println("F2 pile, " + leftBound + " " + rightBound);
+						break;
+					case 60:
+						System.out.println("F3 pile, " + leftBound + " " + rightBound);
+						break;
+					case 70:
+						System.out.println("F4 pile, " + leftBound + " " + rightBound);
+						break;
+					}
+				}
+				if(i == 1)
+				{
+					leftBound = FOUNDATION_LEFT_OFFSET;
+					rightBound = leftBound + CARD_WIDTH;
+				}
+				else
+				{
+					leftBound += HORIZONTAL_PILE_SPACING;
+					rightBound += HORIZONTAL_PILE_SPACING;
+				}
+				j = rightBound%100;
+			}
+		}
+		else if(isTableauRow(e.getY()))
+		{
+			int leftBound = LEFT_OFFSET;
+			int rightBound = leftBound+CARD_WIDTH;
+			int j = rightBound%100;
+			for(int i = 0; i < 7; i++)
+			{
+				if(e.getX() > leftBound && e.getX() < rightBound)
+				{
+					switch(j)
+					{
+					case 10:
+						System.out.println("T1 pile, " + leftBound + " " + rightBound);
+						break;
+					case 20:
+						System.out.println("T2 pile, " + leftBound + " " + rightBound);
+						break;
+					case 30:
+						System.out.println("T3 pile, " + leftBound + " " + rightBound);
+						break;
+					case 40:
+						System.out.println("T4 pile, " + leftBound + " " + rightBound);
+						break;
+					case 50:
+						System.out.println("T5 pile, " + leftBound + " " + rightBound);
+						break;
+					case 60:
+						System.out.println("T6 pile, " + leftBound + " " + rightBound);
+						break;
+					case 70:
+						System.out.println("T7 pile, " + leftBound + " " + rightBound);
+						break;
+					}
+				}
+				leftBound += HORIZONTAL_PILE_SPACING;
+				rightBound += HORIZONTAL_PILE_SPACING;
+				j = rightBound%100;
+			}
+		}
 		repaint();
 	}
-
+	protected boolean isFirstRow(int y)
+	{
+		return ((y > 20) && (y < 136));
+	}
+	protected boolean isTableauRow(int y)
+	{
+		return (y > 160);
+	}
 	protected void handleMouseDragged(MouseEvent e) {
 		// TODO: implement
 		
@@ -121,7 +212,7 @@ public class KlondikeView extends JPanel {
 		drawPile(g, LEFT_OFFSET, TOP_OFFSET, model.getMainDeck());
 		
 		// Paint waste pile
-		System.out.printf("Waste pile expose index=%d\n", model.getWastePile().getExposeIndex());
+		//System.out.printf("Waste pile expose index=%d\n", model.getWastePile().getExposeIndex());
 		drawPile(g, LEFT_OFFSET + HORIZONTAL_PILE_SPACING, TOP_OFFSET, model.getWastePile());
 		
 		// Paint foundation piles (showing top card)
@@ -136,7 +227,10 @@ public class KlondikeView extends JPanel {
 		
 		// TODO: draw selection (if there is one)
 		
-		// TODO: draw congratulatory message if player has won the game
+		if(controller.isWin(model))
+		{
+			// TODO: draw congratulatory message if player has won the game
+		}
 	}
 
 	private void drawPile(Graphics g, int x, int y, Pile pile) {
