@@ -149,25 +149,39 @@ public class KlondikeView extends JPanel {
 		}
 		else if(isTableauRow(e.getY()))
 		{
+			//set left bound at the left offset
 			int leftBound = LEFT_OFFSET;
+			//set the right bound at the left offset plus the width of the card
 			int rightBound = leftBound+CARD_WIDTH;
+			//j is used to calculate the card index
 			int j = 0;
 			for(int i = 0; i < 7; i++)
 			{
+				//if the x value is between the left and right bounds continue
 				if(e.getX() > leftBound && e.getX() < rightBound)
 				{
+					//if mouse is within a specified tableau pile continue
 					if(withinTableau(e.getY(), i))
 					{
-						j = (e.getY()-TABLEAU_TOP_OFFSET)/24;
+						//j is calculated based on the current y subtracted by the tableau top offset then dividing by the verticle spacing
+						j = (e.getY()-TABLEAU_TOP_OFFSET)/VERTICAL_CARD_SPACING;
+						//select the section of cards based on where it was clicked
 						selected = controller.select(model, new Location(LocationType.TABLEAU_PILE, i, j), cardClicked);
 					}
 				}
+				//change the bounds for testing the next tableau pile
 				leftBound += HORIZONTAL_PILE_SPACING;
 				rightBound += HORIZONTAL_PILE_SPACING;
 			}
 		}
 		repaint();
 	}
+	/**
+	 * Checks if mouse is within a specified tableau
+	 * @param y Y coord of the mouse
+	 * @param i specified tableau index
+	 * @return true if mouse is within specified tableau
+	 */
 	protected boolean withinTableau(int y, int i)
 	{
 		int yMax = (model.getTableauPile(i).getNumCards()*VERTICAL_CARD_SPACING)+(CARD_HEIGHT-VERTICAL_CARD_SPACING) + TABLEAU_TOP_OFFSET;
@@ -212,13 +226,36 @@ public class KlondikeView extends JPanel {
 		for (int i = 0; i < 4; i++) {
 			drawPile(g, FOUNDATION_LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING, TOP_OFFSET, model.getFoundationPile(i));
 		}
-		
+		//paint outline for valid placement
+		//set left bound at the left offset
+		int leftBound = LEFT_OFFSET;
+		//set the right bound at the left offset plus the width of the card
+		int rightBound = leftBound+CARD_WIDTH;
+		//j is used to calculate the card index
+		int j = 0;
+		g.setColor(Color.GREEN);
+		for(int i = 0; i < 7; i++)
+		{
+			//if the x value is between the left and right bounds continue
+			if(mousePos.x > leftBound && mousePos.x < rightBound)
+			{
+				//if mouse is within a specified tableau pile continue
+				if(selected != null)
+				{
+					if(withinTableau(mousePos.y, i) && controller.allowMove(model, selected, new Location(LocationType.TABLEAU_PILE, i, model.getTableauPile(i).getIndexOfTopCard())))
+					{
+						g.fillRoundRect((LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING)-5, TABLEAU_TOP_OFFSET-5, CARD_WIDTH+10, CARD_HEIGHT+10+(((model.getTableauPile(i).getNumCards()==0) ? 0 : (model.getTableauPile(i).getNumCards()-1))*VERTICAL_CARD_SPACING), 12, 12);
+					}
+				}
+			}
+			//change the bounds for testing the next tableau pile
+			leftBound += HORIZONTAL_PILE_SPACING;
+			rightBound += HORIZONTAL_PILE_SPACING;
+		}
 		// Paint tableau piles
 		for (int i = 0; i < 7; i++) {
 			drawTableauPile(g, LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING, TABLEAU_TOP_OFFSET, model.getTableauPile(i));
 		}
-		
-		// TODO: draw selection (if there is one)
 		if(selected != null)
 		{
 			int numCards = selected.getNumCards();
