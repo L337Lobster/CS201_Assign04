@@ -184,7 +184,7 @@ public class KlondikeView extends JPanel {
 	 */
 	protected boolean withinTableau(int y, int i)
 	{
-		int yMax = (model.getTableauPile(i).getNumCards()*VERTICAL_CARD_SPACING)+(CARD_HEIGHT-VERTICAL_CARD_SPACING) + TABLEAU_TOP_OFFSET;
+		int yMax = ((model.getTableauPile(i).getNumCards()==0) ? VERTICAL_CARD_SPACING : (model.getTableauPile(i).getNumCards()*VERTICAL_CARD_SPACING))+(CARD_HEIGHT-VERTICAL_CARD_SPACING) + TABLEAU_TOP_OFFSET;
 		return (y < yMax);
 	}
 	protected boolean isFirstRow(int y)
@@ -221,36 +221,10 @@ public class KlondikeView extends JPanel {
 		// Paint waste pile
 		//System.out.printf("Waste pile expose index=%d\n", model.getWastePile().getExposeIndex());
 		drawPile(g, LEFT_OFFSET + HORIZONTAL_PILE_SPACING, TOP_OFFSET, model.getWastePile());
-		
+		drawValidOutline(g);
 		// Paint foundation piles (showing top card)
 		for (int i = 0; i < 4; i++) {
 			drawPile(g, FOUNDATION_LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING, TOP_OFFSET, model.getFoundationPile(i));
-		}
-		//paint outline for valid placement
-		//set left bound at the left offset
-		int leftBound = LEFT_OFFSET;
-		//set the right bound at the left offset plus the width of the card
-		int rightBound = leftBound+CARD_WIDTH;
-		//j is used to calculate the card index
-		int j = 0;
-		g.setColor(Color.GREEN);
-		for(int i = 0; i < 7; i++)
-		{
-			//if the x value is between the left and right bounds continue
-			if(mousePos.x > leftBound && mousePos.x < rightBound)
-			{
-				//if mouse is within a specified tableau pile continue
-				if(selected != null)
-				{
-					if(withinTableau(mousePos.y, i) && controller.allowMove(model, selected, new Location(LocationType.TABLEAU_PILE, i, model.getTableauPile(i).getIndexOfTopCard())))
-					{
-						g.fillRoundRect((LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING)-5, TABLEAU_TOP_OFFSET-5, CARD_WIDTH+10, CARD_HEIGHT+10+(((model.getTableauPile(i).getNumCards()==0) ? 0 : (model.getTableauPile(i).getNumCards()-1))*VERTICAL_CARD_SPACING), 12, 12);
-					}
-				}
-			}
-			//change the bounds for testing the next tableau pile
-			leftBound += HORIZONTAL_PILE_SPACING;
-			rightBound += HORIZONTAL_PILE_SPACING;
 		}
 		// Paint tableau piles
 		for (int i = 0; i < 7; i++) {
@@ -287,7 +261,32 @@ public class KlondikeView extends JPanel {
 			g.drawImage(img, x, y, null);
 		}
 	}
-
+	private void drawValidOutline(Graphics g)
+	{
+		//set left bound at the left offset
+		int leftBound = LEFT_OFFSET;
+		//set the right bound at the left offset plus the width of the card
+		int rightBound = leftBound+CARD_WIDTH;
+		g.setColor(Color.GREEN);
+		for(int i = 0; i < 7; i++)
+		{
+			//if the x value is between the left and right bounds continue
+			if(mousePos.x > leftBound && mousePos.x < rightBound)
+			{
+				//if mouse is within a specified tableau pile continue
+				if(selected != null)
+				{
+					if(withinTableau(mousePos.y, i) && controller.allowMove(model, selected, new Location(LocationType.TABLEAU_PILE, i, model.getTableauPile(i).getIndexOfTopCard())))
+					{
+						g.fillRoundRect((LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING)-5, TABLEAU_TOP_OFFSET-5, CARD_WIDTH+10, CARD_HEIGHT+10+(((model.getTableauPile(i).getNumCards()==0) ? 0 : (model.getTableauPile(i).getNumCards()-1))*VERTICAL_CARD_SPACING), 12, 12);
+					}
+				}
+			}
+			//change the bounds for testing the next tableau pile
+			leftBound += HORIZONTAL_PILE_SPACING;
+			rightBound += HORIZONTAL_PILE_SPACING;
+		}
+	}
 	private void drawTableauPile(Graphics g, int x, int y, Pile tableauPile) {
 		// Draw cards from bottom of pile towards top.
 		// All cards whose indices are greater than or equal to
