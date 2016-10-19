@@ -100,7 +100,6 @@ public class KlondikeView extends JPanel {
 	}
 	
 	protected void handleMousePressed(MouseEvent e) {
-		// TODO: implement
 		//check if mouse is vertically in the first row of piles
 		//this includes the main pile, the waste pile, and the foundation piles
 		mousePos = new Point(e.getX(), e.getY());
@@ -149,30 +148,7 @@ public class KlondikeView extends JPanel {
 		}
 		else if(isTableauRow(e.getY()))
 		{
-			//set left bound at the left offset
-			int leftBound = LEFT_OFFSET;
-			//set the right bound at the left offset plus the width of the card
-			int rightBound = leftBound+CARD_WIDTH;
-			//j is used to calculate the card index
-			int j = 0;
-			for(int i = 0; i < 7; i++)
-			{
-				//if the x value is between the left and right bounds continue
-				if(e.getX() > leftBound && e.getX() < rightBound)
-				{
-					//if mouse is within a specified tableau pile continue
-					if(withinTableau(e.getY(), i))
-					{
-						//j is calculated based on the current y subtracted by the tableau top offset then dividing by the verticle spacing
-						j = (e.getY()-TABLEAU_TOP_OFFSET)/VERTICAL_CARD_SPACING;
-						//select the section of cards based on where it was clicked
-						selected = controller.select(model, new Location(LocationType.TABLEAU_PILE, i, j), cardClicked);
-					}
-				}
-				//change the bounds for testing the next tableau pile
-				leftBound += HORIZONTAL_PILE_SPACING;
-				rightBound += HORIZONTAL_PILE_SPACING;
-			}
+			idkRenameLater(1);
 		}
 		repaint();
 	}
@@ -244,7 +220,53 @@ public class KlondikeView extends JPanel {
 			// TODO: draw congratulatory message if player has won the game
 		}
 	}
-
+	private int checkWhichTableau()
+	{
+		int tabPos = 0;
+		//set left bound at the left offset
+		int leftBound = LEFT_OFFSET;
+		//set the right bound at the left offset plus the width of the card
+		int rightBound = leftBound+CARD_WIDTH;
+		//j is used to calculate the card index
+		for(int i = 0; i < model.getTableaus().size(); i++)
+		{
+			if(mousePos.x > leftBound && mousePos.x < rightBound)
+			{
+				tabPos = i;
+			}
+		}
+		return tabPos;
+	}
+	private void idkRenameLater(int option)
+	{
+		//set left bound at the left offset
+		int leftBound = LEFT_OFFSET;
+		//set the right bound at the left offset plus the width of the card
+		int rightBound = leftBound+CARD_WIDTH;
+		//j is used to calculate the card index
+		int j = 0;
+		for(int i = 0; i < 7; i++)
+		{
+			//if the x value is between the left and right bounds continue
+			if(mousePos.x > leftBound && mousePos.x < rightBound)
+			{
+				//if mouse is within a specified tableau pile continue
+				if(withinTableau(mousePos.y, i))
+				{
+					if(option == 1)
+					{
+						//j is calculated based on the current y subtracted by the tableau top offset then dividing by the vertical spacing
+						j = (mousePos.y-TABLEAU_TOP_OFFSET)/VERTICAL_CARD_SPACING;
+						//select the section of cards based on where it was clicked
+						selected = controller.select(model, new Location(LocationType.TABLEAU_PILE, i, j), cardClicked);
+					}
+				}
+			}
+			//change the bounds for testing the next tableau pile
+			leftBound += HORIZONTAL_PILE_SPACING;
+			rightBound += HORIZONTAL_PILE_SPACING;
+		}
+	}
 	private void drawPile(Graphics g, int x, int y, Pile pile) {
 		if (pile.isEmpty()) {
 			// Draw outline
@@ -277,6 +299,10 @@ public class KlondikeView extends JPanel {
 				if(selected != null)
 				{
 					if(withinTableau(mousePos.y, i) && controller.allowMove(model, selected, new Location(LocationType.TABLEAU_PILE, i, model.getTableauPile(i).getIndexOfTopCard())))
+					{
+						g.fillRoundRect((LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING)-5, TABLEAU_TOP_OFFSET-5, CARD_WIDTH+10, CARD_HEIGHT+10+(((model.getTableauPile(i).getNumCards()==0) ? 0 : (model.getTableauPile(i).getNumCards()-1))*VERTICAL_CARD_SPACING), 12, 12);
+					}
+					else if(i < 4 && isFirstRow(mousePos.y) && controller.allowMove(model, selected, new Location(LocationType.FOUNDATION_PILE, i, model.getFoundationPile(i).getIndexOfTopCard())))
 					{
 						g.fillRoundRect((LEFT_OFFSET + i*HORIZONTAL_PILE_SPACING)-5, TABLEAU_TOP_OFFSET-5, CARD_WIDTH+10, CARD_HEIGHT+10+(((model.getTableauPile(i).getNumCards()==0) ? 0 : (model.getTableauPile(i).getNumCards()-1))*VERTICAL_CARD_SPACING), 12, 12);
 					}
