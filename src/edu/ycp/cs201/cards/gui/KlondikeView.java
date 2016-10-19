@@ -160,8 +160,9 @@ public class KlondikeView extends JPanel {
 	 */
 	protected boolean withinTableau(int y, int i)
 	{
-		int yMax = ((model.getTableauPile(i).getNumCards()==0) ? VERTICAL_CARD_SPACING : (model.getTableauPile(i).getNumCards()*VERTICAL_CARD_SPACING))+(CARD_HEIGHT-VERTICAL_CARD_SPACING) + TABLEAU_TOP_OFFSET;
-		return (y < yMax);
+		int yMax = ((model.getTableauPile(i).getNumCards()==0) ? VERTICAL_CARD_SPACING : ((model.getTableauPile(i).getNumCards()-1)*VERTICAL_CARD_SPACING)+CARD_HEIGHT + TABLEAU_TOP_OFFSET);
+		System.out.println(yMax + " " + y);
+		return (y <= yMax);
 	}
 	protected boolean isFirstRow(int y)
 	{
@@ -169,7 +170,7 @@ public class KlondikeView extends JPanel {
 	}
 	protected boolean isTableauRow(int y)
 	{
-		return (y > TABLEAU_TOP_OFFSET);
+		return (y >= TABLEAU_TOP_OFFSET);
 	}
 	protected void handleMouseDragged(MouseEvent e) {
 		// TODO: implement
