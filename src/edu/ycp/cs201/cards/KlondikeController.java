@@ -137,16 +137,17 @@ public class KlondikeController {
 			{
 				location = new Location(location.getLocationType(), location.getPileIndex(), model.getTableauPile(location.getPileIndex()).getIndexOfTopCard());
 			}
-			if(location.getCardIndex() >= 0 && location.getCardIndex() < model.getTableauPile(location.getPileIndex()).getNumCards())
+			if(location.getCardIndex() >= 0 && location.getCardIndex() <= model.getTableauPile(location.getPileIndex()).getNumCards())
 			{
 				//as long as the card is exposed continue
 				if(location.getCardIndex() >= model.getTableauPile(location.getPileIndex()).getExposeIndex())
 				{
 					//sets the selection to the location and the cards removed from the specified tableau pile where the number removed is 
 					//equal to the total number of cards in the pile minus the index of the card that is clicked on
-					ArrayList<Card> temp = model.getTableauPile(location.getPileIndex()).removeCards(model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex());
+					int removeNum = (model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex() != 0) ? model.getTableauPile(location.getPileIndex()).getNumCards()-location.getCardIndex() : 1;
+					ArrayList<Card> temp = model.getTableauPile(location.getPileIndex()).removeCards(removeNum);
 					int horizOffset = 30+(location.getPileIndex()*110);
-					int vertOffset = 160+(24*location.getCardIndex());					
+					int vertOffset = 160+(24*location.getCardIndex());	
 					select = new Selection(location, temp, clicked, vertOffset, horizOffset);
 				}
 			}
